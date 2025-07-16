@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>مرسيدس - الصفحة الرئيسية</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* تأثير الظهور مع التكبير */
+    #banner-text {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 1.5s ease, transform 1.5s ease;
+    }
+    #banner-text.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    html.dark {
+      background-color: #000;
+      color: #fff;
+    }
+  </style>
+</head>
+<body class="bg-white text-black dark:bg-black dark:text-white font-sans transition-colors duration-500">
+
+  <!-- 🧭 Header -->
+  <header class="flex items-center justify-between p-6 bg-gray-100 dark:bg-gray-900">
+    <h1 class="text-2xl font-bold tracking-widest" id="site-title">مرسيدس</h1>
+    <nav class="space-x-6 rtl:space-x-reverse flex items-center">
+
+      <!-- روابط -->
+      <a href="index.html" class="hover:text-gray-600 dark:hover:text-gray-300 nav-link" data-en="Home" data-ar="الرئيسية">الرئيسية</a>
+      <a href="cars.html" class="hover:text-gray-600 dark:hover:text-gray-300 nav-link" data-en="Cars" data-ar="السيارات">السيارات</a>
+      <a href="booking.html" class="hover:text-gray-600 dark:hover:text-gray-300 nav-link" data-en="Book Test Drive" data-ar="احجز تجربة">احجز تجربة</a>
+      <a href="contact.html" class="hover:text-gray-600 dark:hover:text-gray-300 nav-link" data-en="Contact Us" data-ar="تواصل معنا">تواصل معنا</a>
+
+      <!-- اختيار اللغة -->
+      <select id="lang-select" class="ml-4 p-1 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white">
+        <option value="ar">العربية</option>
+        <option value="en">English</option>
+      </select>
+
+      <!-- زر تبديل الوضع -->
+      <button id="toggle-dark" title="تبديل الوضع النهاري / الليلي" class="ml-4 p-1 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
+        🌙
+      </button>
+    </nav>
+  </header>
+
+  <!-- 🏞️ Banner -->
+  <section class="relative">
+    <img src="https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg" class="w-full h-[80vh] object-cover" alt="مرسيدس" />
+    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+      <h2 id="banner-text" class="text-4xl md:text-6xl font-extrabold text-center">اكتشف الفخامة مع مرسيدس</h2>
+    </div>
+  </section>
+
+  <!-- 🚘 السيارات المميزة -->
+  <section class="py-16 px-6 md:px-20">
+    <h2 id="featured-title" class="text-3xl font-bold mb-8 border-r-4 border-black dark:border-white pr-4">السيارات المميزة</h2>
+    <div id="carsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <!-- السيارات هتتعرض هنا -->
+    </div>
+
+    <div class="mt-10 text-center">
+      <a href="cars.html" id="view-all-cars" class="inline-block bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-full hover:bg-gray-800 dark:hover:bg-gray-300 transition">استعرض جميع السيارات</a>
+    </div>
+  </section>
+
+  <!-- 📞 تواصل سريع -->
+  <section class="bg-gray-200 dark:bg-gray-800 py-10 text-center">
+    <h3 id="contact-title" class="text-xl mb-2">هل لديك استفسار؟</h3>
+    <a href="contact.html" id="contact-link" class="underline hover:text-gray-600 dark:hover:text-gray-300">تواصل معنا الآن</a>
+  </section>
+
+  <!-- 🔻 Footer -->
+  <footer class="bg-gray-100 dark:bg-gray-900 py-4 text-center text-sm text-gray-700 dark:text-gray-400">
+    &copy; 2025 مرسيدس. جميع الحقوق محفوظة.
+  </footer>
+
+  <!-- 📜 سكربت -->
+  <script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbz4Fjsfuf_1KQtQd_vauNbFu2uyXuF_SxCQuchtn908_gfppMhdH8bKexCsLJT-9pAKeg/exec";
+
+    // تحميل السيارات
+    async function loadCars() {
+      try {
+        const res = await fetch(`${API_URL}?action=getCars`);
+        const cars = await res.json();
+        const container = document.getElementById('carsContainer');
+        container.innerHTML = ''; // تفريغ الحاوية
+        const top3 = cars.slice(0, 3);
+
+        top3.forEach(car => {
+          const card = document.createElement('div');
+          card.className = 'bg-white text-black dark:bg-gray-700 dark:text-white rounded-2xl overflow-hidden shadow-lg';
+          card.innerHTML = `
+            <img src="${car['الصورةURL']}" class="w-full h-52 object-cover" alt="${car['الاسم']}">
+            <div class="p-4">
+              <h3 class="text-xl font-bold mb-2 car-name">${car['الاسم']}</h3>
+              <p class="text-sm text-gray-700 dark:text-gray-300 mb-2 car-desc">${car['الوصف'].slice(0, 60)}...</p>
+              <p class="font-semibold text-lg text-gray-900 dark:text-gray-200 mb-4 car-price">السعر: ${car['السعر']}</p>
+              <a href="car-details.html?id=${car['السيارةID']}" class="inline-block bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded hover:bg-gray-800 dark:hover:bg-gray-300">عرض التفاصيل</a>
+            </div>
+          `;
+          container.appendChild(card);
+        });
+
+        applyLanguage(currentLang); // تطبيق اللغة على محتوى السيارات
+      } catch (err) {
+        console.error("خطأ في جلب السيارات:", err);
+      }
+    }
+
+    // الترجمة بين اللغتين
+    const translations = {
+      ar: {
+        "مرسيدس": "مرسيدس",
+        "الرئيسية": "الرئيسية",
+        "السيارات": "السيارات",
+        "احجز تجربة": "احجز تجربة",
+        "تواصل معنا": "تواصل معنا",
+        "اكتشف الفخامة مع مرسيدس": "اكتشف الفخامة مع مرسيدس",
+        "السيارات المميزة": "السيارات المميزة",
+        "استعرض جميع السيارات": "استعرض جميع السيارات",
+        "هل لديك استفسار؟": "هل لديك استفسار؟",
+        "تواصل معنا الآن": "تواصل معنا الآن",
+        "السعر:": "السعر:",
+        "عرض التفاصيل": "عرض التفاصيل",
+        "جميع الحقوق محفوظة.": "جميع الحقوق محفوظة."
+      },
+      en: {
+        "مرسيدس": "Mercedes",
+        "الرئيسية": "Home",
+        "السيارات": "Cars",
+        "احجز تجربة": "Book Test Drive",
+        "تواصل معنا": "Contact Us",
+        "اكتشف الفخامة مع مرسيدس": "Discover Luxury with Mercedes",
+        "السيارات المميزة": "Featured Cars",
+        "استعرض جميع السيارات": "View All Cars",
+        "هل لديك استفسار؟": "Have Questions?",
+        "تواصل معنا الآن": "Contact Us Now",
+        "السعر:": "Price:",
+        "عرض التفاصيل": "View Details",
+        "جميع الحقوق محفوظة.": "All rights reserved."
+      }
+    };
+
+    // التطبيق الحالي للغة
+    let currentLang = localStorage.getItem('site-lang') || 'ar';
+
+    // تبديل اللغة وتحديث النصوص
+    function applyLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem('site-lang', lang);
+
+      // تغيير اتجاه الصفحة
+      if (lang === 'ar') {
+        document.documentElement.lang = 'ar';
+        document.documentElement.dir = 'rtl';
+      } else {
+        document.documentElement.lang = 'en';
+        document.documentElement.dir = 'ltr';
+      }
+
+      // ترجمة نصوص الهيدر والروابط
+      document.querySelectorAll('.nav-link').forEach(el => {
+        const text = el.getAttribute(`data-${lang}`);
+        if (text) el.textContent = text;
+      });
+
+      // ترجمات ثابتة في الصفحة
+      document.getElementById('site-title').textContent = translations[lang]["مرسيدس"];
+      document.getElementById('banner-text').textContent = translations[lang]["اكتشف الفخامة مع مرسيدس"];
+      document.getElementById('featured-title').textContent = translations[lang]["السيارات المميزة"];
+      document.getElementById('view-all-cars').textContent = translations[lang]["استعرض جميع السيارات"];
+      document.getElementById('contact-title').textContent = translations[lang]["هل لديك استفسار؟"];
+      document.getElementById('contact-link').textContent = translations[lang]["تواصل معنا الآن"];
+      document.querySelector('footer').innerHTML = `&copy; 2025 ${translations[lang]["مرسيدس"]}. ${translations[lang]["جميع الحقوق محفوظة."]}`;
+
+      // ترجمة السيارات (داخل البطاقات)
+      document.querySelectorAll('.car-price').forEach(el => {
+        if (lang === 'ar') {
+          el.textContent = el.textContent.replace("Price:", "السعر:");
+        } else {
+          el.textContent = el.textContent.replace("السعر:", "Price:");
+        }
+      });
+      document.querySelectorAll('a[href^="car-details.html"]').forEach(el => {
+        el.textContent = translations[lang]["عرض التفاصيل"];
+      });
+    }
+
+    // تبديل الوضع الليلي والنهاري
+    const toggleDarkBtn = document.getElementById('toggle-dark');
+
+    function setDarkMode(isDark) {
+      if (isDark) {
+        document.documentElement.classList.add('dark');
+        toggleDarkBtn.textContent = "☀️";
+        localStorage.setItem('dark-mode', 'true');
+      } else {
+        document.documentElement.classList.remove('dark');
+        toggleDarkBtn.textContent = "🌙";
+        localStorage.setItem('dark-mode', 'false');
+      }
+    }
+
+    // تحميل حالة الوضع الليلي من التخزين
+    function loadDarkMode() {
+      const saved = localStorage.getItem('dark-mode');
+      if (saved === 'true') setDarkMode(true);
+      else setDarkMode(false);
+    }
+
+    // أحداث التبديل
+    toggleDarkBtn.addEventListener('click', () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      setDarkMode(!isDark);
+    });
+
+    // تغيير اللغة من القائمة
+    const langSelect = document.getElementById('lang-select');
+    langSelect.value = currentLang;
+
+    langSelect.addEventListener('change', (e) => {
+      applyLanguage(e.target.value);
+    });
+
+    // ظهور جملة البانر بتأثير
+    window.onload = () => {
+      loadDarkMode();
+      applyLanguage(currentLang);
+      loadCars();
+
+      const bannerText = document.getElementById('banner-text');
+      setTimeout(() => {
+        bannerText.classList.add('show');
+      }, 200);
+    };
+  </script>
+
+</body>
+</html> 

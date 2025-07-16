@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>تفاصيل السيارة</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .dark-mode {
+      background-color: #0f172a;
+      color: #f1f5f9;
+    }
+  </style>
+</head>
+<body class="bg-white text-gray-800 transition-all duration-300" id="body">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center p-4 shadow-md bg-white dark-mode:bg-slate-800">
+    <h1 class="text-2xl font-bold">تفاصيل السيارة</h1>
+    <button id="toggleMode" class="bg-gray-800 text-white px-4 py-2 rounded">
+      🌙 الوضع الليلي
+    </button>
+  </header>
+
+  <main class="p-6 max-w-4xl mx-auto" id="carDetails">
+    <p class="text-center text-lg" id="loading">جارٍ تحميل البيانات...</p>
+  </main>
+
+  <!-- Script -->
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbz4Fjsfuf_1KQtQd_vauNbFu2uyXuF_SxCQuchtn908_gfppMhdH8bKexCsLJT-9pAKeg/exec";
+    const urlParams = new URLSearchParams(window.location.search);
+    const carId = urlParams.get("id");
+
+    // جلب تفاصيل السيارة
+    fetch(`${scriptURL}?action=getCarById&id=${carId}`)
+      .then(res => res.json())
+      .then(car => {
+        document.getElementById('loading').remove();
+        const container = document.getElementById('carDetails');
+
+        if (car.error) {
+          container.innerHTML = `<p class="text-red-600 text-center">${car.error}</p>`;
+          return;
+        }
+
+        container.innerHTML = `
+          <div class="bg-white dark-mode:bg-slate-700 rounded-xl shadow-lg overflow-hidden">
+            <img src="${car["الصورةURL"]}" class="w-full h-64 object-cover" alt="${car["الاسم"]}">
+            <div class="p-6 space-y-4">
+              <h2 class="text-3xl font-bold">${car["الاسم"]}</h2>
+              <p class="text-xl text-gray-700 dark-mode:text-gray-300">💰 السعر: ${car["السعر"]}</p>
+              <p><strong>🧾 المواصفات:</strong> ${car["المواصفات"]}</p>
+              <p><strong>✨ الميزات:</strong> ${car["الميزات"]}</p>
+              <p><strong>🎨 الألوان المتاحة:</strong> ${car["الألوان المتاحة"]}</p>
+              <p><strong>🔧 المحرك:</strong> ${car["المحرك"]}</p>
+
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+                <img src="${car["صورة إضافية 1 URL"]}" class="w-full h-48 object-cover rounded" alt="صورة إضافية 1">
+                <img src="${car["صورة إضافية 2 URL"]}" class="w-full h-48 object-cover rounded" alt="صورة إضافية 2">
+              </div>
+
+              <a href="booking.html?carId=${car["السيارةID"]}" class="block mt-6 text-center bg-black text-white py-3 rounded hover:bg-gray-900 transition">
+                احجز تجربة قيادة
+              </a>
+            </div>
+          </div>
+        `;
+      })
+      .catch(err => {
+        document.getElementById('loading').innerText = "فشل تحميل البيانات.";
+        console.error(err);
+      });
+
+    // الوضع الليلي/النهاري
+    const toggleBtn = document.getElementById('toggleMode');
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي';
+    });
+  </script>
+</body>
+</html> 

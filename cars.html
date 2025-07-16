@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>سيارات مرسيدس</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .dark-mode {
+      background-color: #0f172a;
+      color: #f1f5f9;
+    }
+  </style>
+</head>
+<body class="transition-all duration-300 bg-white text-gray-800" id="body">
+
+  <!-- Header -->
+  <header class="flex justify-between items-center p-4 shadow-md bg-white dark-mode:bg-slate-800">
+    <h1 class="text-2xl font-bold">🚗 سيارات مرسيدس</h1>
+    <button id="toggleMode" class="bg-gray-800 text-white px-4 py-2 rounded">
+      🌙 الوضع الليلي
+    </button>
+  </header>
+
+  <!-- السيارات -->
+  <main class="p-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" id="carsContainer">
+    <p id="loading" class="col-span-full text-center text-lg">جارٍ تحميل السيارات...</p>
+  </main>
+
+  <!-- Script -->
+  <script>
+    const scriptURL = "https://script.google.com/macros/s/AKfycbz4Fjsfuf_1KQtQd_vauNbFu2uyXuF_SxCQuchtn908_gfppMhdH8bKexCsLJT-9pAKeg/exec";
+
+    // جلب السيارات
+    fetch(`${scriptURL}?action=getCars`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('loading').remove();
+        const container = document.getElementById('carsContainer');
+
+        data.forEach(car => {
+          const card = document.createElement('div');
+          card.className = 'bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition dark-mode:bg-slate-700';
+
+          card.innerHTML = `
+            <img src="${car["الصورةURL"]}" alt="${car["الاسم"]}" class="w-full h-48 object-cover rounded mb-4">
+            <h2 class="text-xl font-bold mb-2">${car["الاسم"]}</h2>
+            <p class="text-gray-600 dark-mode:text-gray-300 mb-2">السعر: ${car["السعر"]}</p>
+            <a href="car-details.html?id=${car["السيارةID"]}" class="block bg-black text-white text-center py-2 rounded hover:bg-gray-900 transition">
+              عرض التفاصيل
+            </a>
+          `;
+          container.appendChild(card);
+        });
+      })
+      .catch(err => {
+        document.getElementById('loading').innerText = 'فشل تحميل السيارات.';
+        console.error(err);
+      });
+
+    // الوضع الليلي/النهاري
+    const toggleBtn = document.getElementById('toggleMode');
+    toggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('dark-mode');
+      toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي';
+    });
+  </script>
+</body>
+</html> 

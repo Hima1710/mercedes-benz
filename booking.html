@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>حجز تجربة قيادة - مرسيدس</title>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      const form = document.getElementById("bookingForm");
+
+      form.addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const date = document.getElementById("date").value;
+
+        // جلب carId من الرابط
+        const urlParams = new URLSearchParams(window.location.search);
+        const carId = urlParams.get("id");
+
+        if (!carId) {
+          alert("حدث خطأ: لم يتم تحديد السيارة للحجز.");
+          return;
+        }
+
+        if (!name || !phone || !email || !date) {
+          alert("يرجى ملء جميع الحقول.");
+          return;
+        }
+
+        fetch("https://script.google.com/macros/s/AKfycbz4Fjsfuf_1KQtQd_vauNbFu2uyXuF_SxCQuchtn908_gfppMhdH8bKexCsLJT-9pAKeg/exec?action=submitBooking", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            name: name,
+            phone: phone,
+            email: email,
+            carId: carId,
+            date: date
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert("تم إرسال الحجز بنجاح!");
+            form.reset();
+          } else {
+            alert("حدث خطأ أثناء إرسال الحجز، حاول مرة أخرى.");
+          }
+        })
+        .catch(error => {
+          console.error("خطأ في الإرسال:", error);
+          alert("لم نتمكن من إرسال الحجز بسبب مشكلة في الاتصال.");
+        });
+      });
+
+      // تعيين أقل تاريخ متاح اليوم
+      const dateInput = document.getElementById("date");
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.setAttribute('min', today);
+    });
+  </script>
+</head>
+<body style="font-family: Arial, sans-serif; max-width: 500px; margin: 2rem auto; padding: 1rem;">
+  <h1 style="text-align: center; margin-bottom: 1.5rem;">حجز تجربة قيادة مرسيدس</h1>
+
+  <form id="bookingForm" style="display: flex; flex-direction: column; gap: 1rem;">
+    <input type="text" id="name" placeholder="الاسم الكامل" required style="padding: 0.5rem; font-size: 1rem;" />
+    <input type="tel" id="phone" placeholder="رقم الهاتف" required style="padding: 0.5rem; font-size: 1rem;" />
+    <input type="email" id="email" placeholder="البريد الإلكتروني" required style="padding: 0.5rem; font-size: 1rem;" />
+    <label for="date">اختر تاريخ تجربة القيادة:</label>
+    <input type="date" id="date" required style="padding: 0.5rem; font-size: 1rem;" />
+    <button type="submit" style="padding: 0.75rem; background-color: #0066cc; color: white; font-size: 1.1rem; border: none; cursor: pointer;">
+      احجز الآن
+    </button>
+  </form>
+</body>
+</html> 
