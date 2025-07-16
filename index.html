@@ -1,245 +1,159 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="dark">
 <head>
   <meta charset="UTF-8" />
-  <title>مرسيدس - الصفحة الرئيسية</title>
-  <script src="https://cdn.tailwindcss.com"></script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>مرسيدس - الفخامة تتحرك</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
   <style>
-    /* تأثير الظهور مع التكبير */
-    #banner-text {
-      opacity: 0;
-      transform: scale(0.8);
-      transition: opacity 1.5s ease, transform 1.5s ease;
-    }
-    #banner-text.show {
-      opacity: 1;
-      transform: scale(1);
-    }
-    html.dark {
-      background-color: #000;
+    .lang-ar { display: block; }
+    .lang-en { display: none; }
+    .en-active .lang-ar { display: none; }
+    .en-active .lang-en { display: block; }
+
+    .glass-btn {
+      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: #fff;
+      transition: all 0.3s ease;
+    }
+    .glass-btn:hover {
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.05);
+    }
+
+    #typewriterText {
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 4px #ffffff44; }
+      to { text-shadow: 0 0 10px #ffffffaa; }
     }
   </style>
 </head>
-<body class="bg-white text-black dark:bg-black dark:text-white font-sans transition-colors duration-500">
+<body class="bg-white dark:bg-black text-black dark:text-white transition duration-500">
+  <audio id="typeSound" src="https://assets.mixkit.co/sfx/preview/mixkit-typewriter-key-1124.mp3" preload="auto"></audio>
 
-  <!-- 🧭 Header -->
-  <header class="flex items-center justify-between p-6 bg-gray-100 dark:bg-gray-900">
-    <h1 class="text-2xl font-bold tracking-widest" id="site-title">مرسيدس</h1>
-    <nav class="space-x-6 rtl:space-x-reverse flex items-center">
-
-      <!-- روابط -->
-      <a href="index.html" class="hover:text-gray-600 dark:hover:text-gray-300 nav-link" data-en="Home" data-ar="الرئيسية">الرئيسية</a>
-      <a href="cars.html" class="hover:text-gray-600 dark:hover:text-gray-300 nav-link" data-en="Cars" data-ar="السيارات">السيارات</a>
-      <a href="booking.html" class="hover:text-gray-600 dark:hover:text-gray-300 nav-link" data-en="Book Test Drive" data-ar="احجز تجربة">احجز تجربة</a>
-      <a href="contact.html" class="hover:text-gray-600 dark:hover:text-gray-300 nav-link" data-en="Contact Us" data-ar="تواصل معنا">تواصل معنا</a>
-
-      <!-- اختيار اللغة -->
-      <select id="lang-select" class="ml-4 p-1 rounded border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-black dark:text-white">
-        <option value="ar">العربية</option>
-        <option value="en">English</option>
-      </select>
-
-      <!-- زر تبديل الوضع -->
-      <button id="toggle-dark" title="تبديل الوضع النهاري / الليلي" class="ml-4 p-1 rounded bg-gray-300 dark:bg-gray-700 text-black dark:text-white">
-        🌙
-      </button>
-    </nav>
+  <!-- Header -->
+  <header class="fixed top-0 w-full z-50 flex justify-between items-center px-6 py-4 backdrop-blur-md bg-white/30 dark:bg-black/30 border-b border-gray-200 dark:border-gray-800">
+    <h1 class="text-2xl font-extrabold tracking-wide">Mercedes-Benz</h1>
+    <div class="flex items-center gap-4">
+      <button onclick="toggleDarkMode()" class="glass-btn px-4 py-2 rounded-full text-sm">🌓</button>
+      <button onclick="toggleLang()" class="glass-btn px-4 py-2 rounded-full text-sm">🌐</button>
+    </div>
   </header>
 
-  <!-- 🏞️ Banner -->
-  <section class="relative">
-    <img src="https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg" class="w-full h-[80vh] object-cover" alt="مرسيدس" />
-    <div class="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-      <h2 id="banner-text" class="text-4xl md:text-6xl font-extrabold text-center">اكتشف الفخامة مع مرسيدس</h2>
-    </div>
-  </section>
-
-  <!-- 🚘 السيارات المميزة -->
-  <section class="py-16 px-6 md:px-20">
-    <h2 id="featured-title" class="text-3xl font-bold mb-8 border-r-4 border-black dark:border-white pr-4">السيارات المميزة</h2>
-    <div id="carsContainer" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <!-- السيارات هتتعرض هنا -->
+  <!-- Hero Section -->
+  <section class="pt-28 relative">
+    <div class="swiper mySwiper h-[90vh] w-full">
+      <div class="swiper-wrapper">
+        <div class="swiper-slide"><img src="https://images.pexels.com/photos/120049/pexels-photo-120049.jpeg" class="w-full h-full object-cover" /></div>
+        <div class="swiper-slide"><img src="https://images.pexels.com/photos/756789/pexels-photo-756789.jpeg" class="w-full h-full object-cover" /></div>
+        <div class="swiper-slide"><img src="https://images.pexels.com/photos/3457780/pexels-photo-3457780.jpeg" class="w-full h-full object-cover" /></div>
+        <div class="swiper-slide"><img src="https://images.pexels.com/photos/1104764/pexels-photo-1104764.jpeg" class="w-full h-full object-cover" /></div>
+      </div>
     </div>
 
-    <div class="mt-10 text-center">
-      <a href="cars.html" id="view-all-cars" class="inline-block bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-full hover:bg-gray-800 dark:hover:bg-gray-300 transition">استعرض جميع السيارات</a>
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-white z-20 max-w-2xl" data-aos="fade-up">
+      <h1 class="lang-ar text-5xl md:text-7xl font-extrabold drop-shadow-lg">اكتشف الفخامة مع مرسيدس</h1>
+      <h1 class="lang-en text-5xl md:text-7xl font-extrabold drop-shadow-lg">Discover Luxury with Mercedes</h1>
+
+      <p class="lang-ar mt-6 text-xl md:text-2xl">تجربة قيادة لا تُنسى تبدأ من هنا.</p>
+      <p class="lang-en mt-6 text-xl md:text-2xl">An unforgettable driving experience starts here.</p>
+
+      <!-- Typewriter Section -->
+      <div id="typewriterText" class="mt-8 text-lg md:text-xl font-medium text-gray-200 min-h-[80px]">
+        <span class="lang-ar"></span>
+        <span class="lang-en"></span>
+      </div>
+
+      <div class="mt-10 flex justify-center gap-6">
+        <a href="cars.html" class="glass-btn text-white px-6 py-3 rounded-full text-lg font-semibold">🚗 عرض السيارات</a>
+        <a href="contact.html" class="glass-btn text-white px-6 py-3 rounded-full text-lg font-semibold">📞 تواصل معنا</a>
+      </div>
     </div>
+
+    <div class="absolute inset-0 bg-black/40 z-10"></div>
   </section>
 
-  <!-- 📞 تواصل سريع -->
-  <section class="bg-gray-200 dark:bg-gray-800 py-10 text-center">
-    <h3 id="contact-title" class="text-xl mb-2">هل لديك استفسار؟</h3>
-    <a href="contact.html" id="contact-link" class="underline hover:text-gray-600 dark:hover:text-gray-300">تواصل معنا الآن</a>
-  </section>
-
-  <!-- 🔻 Footer -->
-  <footer class="bg-gray-100 dark:bg-gray-900 py-4 text-center text-sm text-gray-700 dark:text-gray-400">
-    &copy; 2025 مرسيدس. جميع الحقوق محفوظة.
+  <!-- Footer -->
+  <footer class="text-center py-6 mt-12 border-t border-gray-300 dark:border-gray-700">
+    <p class="lang-ar">&copy; 2025 جميع الحقوق محفوظة - موقع مرسيدس</p>
+    <p class="lang-en">&copy; 2025 All rights reserved - Mercedes Website</p>
   </footer>
 
-  <!-- 📜 سكربت -->
+  <!-- Scripts -->
   <script>
-    const API_URL = "https://script.google.com/macros/s/AKfycbz4Fjsfuf_1KQtQd_vauNbFu2uyXuF_SxCQuchtn908_gfppMhdH8bKexCsLJT-9pAKeg/exec";
+    AOS.init();
 
-    // تحميل السيارات
-    async function loadCars() {
-      try {
-        const res = await fetch(`${API_URL}?action=getCars`);
-        const cars = await res.json();
-        const container = document.getElementById('carsContainer');
-        container.innerHTML = ''; // تفريغ الحاوية
-        const top3 = cars.slice(0, 3);
-
-        top3.forEach(car => {
-          const card = document.createElement('div');
-          card.className = 'bg-white text-black dark:bg-gray-700 dark:text-white rounded-2xl overflow-hidden shadow-lg';
-          card.innerHTML = `
-            <img src="${car['الصورةURL']}" class="w-full h-52 object-cover" alt="${car['الاسم']}">
-            <div class="p-4">
-              <h3 class="text-xl font-bold mb-2 car-name">${car['الاسم']}</h3>
-              <p class="text-sm text-gray-700 dark:text-gray-300 mb-2 car-desc">${car['الوصف'].slice(0, 60)}...</p>
-              <p class="font-semibold text-lg text-gray-900 dark:text-gray-200 mb-4 car-price">السعر: ${car['السعر']}</p>
-              <a href="car-details.html?id=${car['السيارةID']}" class="inline-block bg-black dark:bg-white text-white dark:text-black px-4 py-2 rounded hover:bg-gray-800 dark:hover:bg-gray-300">عرض التفاصيل</a>
-            </div>
-          `;
-          container.appendChild(card);
-        });
-
-        applyLanguage(currentLang); // تطبيق اللغة على محتوى السيارات
-      } catch (err) {
-        console.error("خطأ في جلب السيارات:", err);
-      }
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
     }
 
-    // الترجمة بين اللغتين
-    const translations = {
-      ar: {
-        "مرسيدس": "مرسيدس",
-        "الرئيسية": "الرئيسية",
-        "السيارات": "السيارات",
-        "احجز تجربة": "احجز تجربة",
-        "تواصل معنا": "تواصل معنا",
-        "اكتشف الفخامة مع مرسيدس": "اكتشف الفخامة مع مرسيدس",
-        "السيارات المميزة": "السيارات المميزة",
-        "استعرض جميع السيارات": "استعرض جميع السيارات",
-        "هل لديك استفسار؟": "هل لديك استفسار؟",
-        "تواصل معنا الآن": "تواصل معنا الآن",
-        "السعر:": "السعر:",
-        "عرض التفاصيل": "عرض التفاصيل",
-        "جميع الحقوق محفوظة.": "جميع الحقوق محفوظة."
+    function toggleLang() {
+      document.documentElement.classList.toggle('en-active');
+    }
+
+    new Swiper(".mySwiper", {
+      loop: true,
+      autoplay: {
+        delay: 4000,
+        disableOnInteraction: false,
       },
-      en: {
-        "مرسيدس": "Mercedes",
-        "الرئيسية": "Home",
-        "السيارات": "Cars",
-        "احجز تجربة": "Book Test Drive",
-        "تواصل معنا": "Contact Us",
-        "اكتشف الفخامة مع مرسيدس": "Discover Luxury with Mercedes",
-        "السيارات المميزة": "Featured Cars",
-        "استعرض جميع السيارات": "View All Cars",
-        "هل لديك استفسار؟": "Have Questions?",
-        "تواصل معنا الآن": "Contact Us Now",
-        "السعر:": "Price:",
-        "عرض التفاصيل": "View Details",
-        "جميع الحقوق محفوظة.": "All rights reserved."
-      }
-    };
+      effect: "fade",
+    });
 
-    // التطبيق الحالي للغة
-    let currentLang = localStorage.getItem('site-lang') || 'ar';
+    const arTexts = [
+      "ابحث عن السيارات المتوفرة عبر الإنترنت",
+      "سيارتك المرسيدس-البنز الجديدة في انتظارك."
+    ];
 
-    // تبديل اللغة وتحديث النصوص
-    function applyLanguage(lang) {
-      currentLang = lang;
-      localStorage.setItem('site-lang', lang);
+    const enTexts = [
+      "Search available cars online",
+      "Your new Mercedes-Benz is waiting."
+    ];
 
-      // تغيير اتجاه الصفحة
-      if (lang === 'ar') {
-        document.documentElement.lang = 'ar';
-        document.documentElement.dir = 'rtl';
-      } else {
-        document.documentElement.lang = 'en';
-        document.documentElement.dir = 'ltr';
-      }
+    function typeWriter(element, texts, speed = 60, delay = 1500) {
+      let line = 0;
+      let char = 0;
+      element.innerHTML = "";
+      const typeSound = document.getElementById('typeSound');
 
-      // ترجمة نصوص الهيدر والروابط
-      document.querySelectorAll('.nav-link').forEach(el => {
-        const text = el.getAttribute(`data-${lang}`);
-        if (text) el.textContent = text;
-      });
+      function write() {
+        if (line >= texts.length) return;
+        const currentChar = texts[line].charAt(char);
+        element.innerHTML += currentChar;
 
-      // ترجمات ثابتة في الصفحة
-      document.getElementById('site-title').textContent = translations[lang]["مرسيدس"];
-      document.getElementById('banner-text').textContent = translations[lang]["اكتشف الفخامة مع مرسيدس"];
-      document.getElementById('featured-title').textContent = translations[lang]["السيارات المميزة"];
-      document.getElementById('view-all-cars').textContent = translations[lang]["استعرض جميع السيارات"];
-      document.getElementById('contact-title').textContent = translations[lang]["هل لديك استفسار؟"];
-      document.getElementById('contact-link').textContent = translations[lang]["تواصل معنا الآن"];
-      document.querySelector('footer').innerHTML = `&copy; 2025 ${translations[lang]["مرسيدس"]}. ${translations[lang]["جميع الحقوق محفوظة."]}`;
-
-      // ترجمة السيارات (داخل البطاقات)
-      document.querySelectorAll('.car-price').forEach(el => {
-        if (lang === 'ar') {
-          el.textContent = el.textContent.replace("Price:", "السعر:");
-        } else {
-          el.textContent = el.textContent.replace("السعر:", "Price:");
+        if (currentChar !== " " && typeSound) {
+          typeSound.currentTime = 0;
+          typeSound.play().catch(() => {});
         }
-      });
-      document.querySelectorAll('a[href^="car-details.html"]').forEach(el => {
-        el.textContent = translations[lang]["عرض التفاصيل"];
-      });
-    }
 
-    // تبديل الوضع الليلي والنهاري
-    const toggleDarkBtn = document.getElementById('toggle-dark');
-
-    function setDarkMode(isDark) {
-      if (isDark) {
-        document.documentElement.classList.add('dark');
-        toggleDarkBtn.textContent = "☀️";
-        localStorage.setItem('dark-mode', 'true');
-      } else {
-        document.documentElement.classList.remove('dark');
-        toggleDarkBtn.textContent = "🌙";
-        localStorage.setItem('dark-mode', 'false');
+        char++;
+        if (char < texts[line].length) {
+          setTimeout(write, speed);
+        } else {
+          element.innerHTML += "<br>";
+          line++;
+          char = 0;
+          setTimeout(write, delay);
+        }
       }
+      write();
     }
 
-    // تحميل حالة الوضع الليلي من التخزين
-    function loadDarkMode() {
-      const saved = localStorage.getItem('dark-mode');
-      if (saved === 'true') setDarkMode(true);
-      else setDarkMode(false);
-    }
+    window.addEventListener('load', () => {
+      const arEl = document.querySelector("#typewriterText .lang-ar");
+      const enEl = document.querySelector("#typewriterText .lang-en");
 
-    // أحداث التبديل
-    toggleDarkBtn.addEventListener('click', () => {
-      const isDark = document.documentElement.classList.contains('dark');
-      setDarkMode(!isDark);
+      typeWriter(arEl, arTexts);
+      typeWriter(enEl, enTexts);
     });
-
-    // تغيير اللغة من القائمة
-    const langSelect = document.getElementById('lang-select');
-    langSelect.value = currentLang;
-
-    langSelect.addEventListener('change', (e) => {
-      applyLanguage(e.target.value);
-    });
-
-    // ظهور جملة البانر بتأثير
-    window.onload = () => {
-      loadDarkMode();
-      applyLanguage(currentLang);
-      loadCars();
-
-      const bannerText = document.getElementById('banner-text');
-      setTimeout(() => {
-        bannerText.classList.add('show');
-      }, 200);
-    };
   </script>
-
 </body>
-</html> 
+</html>

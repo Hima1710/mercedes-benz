@@ -1,83 +1,95 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>تفاصيل السيارة</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>تفاصيل السيارة | Mercedes-Benz</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .dark-mode {
-      background-color: #0f172a;
-      color: #f1f5f9;
+    .fade-in {
+      animation: fadeIn 1s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .zoom-on-hover {
+      transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    }
+    .zoom-on-hover:hover {
+      transform: scale(1.08);
+      box-shadow: 0 10px 20px rgba(255,255,255,0.2);
+    }
+    .highlight {
+      animation: glow 1.2s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from { text-shadow: 0 0 5px rgba(255,255,255,0.2); }
+      to { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
     }
   </style>
 </head>
-<body class="bg-white text-gray-800 transition-all duration-300" id="body">
-
-  <!-- Header -->
-  <header class="flex justify-between items-center p-4 shadow-md bg-white dark-mode:bg-slate-800">
-    <h1 class="text-2xl font-bold">تفاصيل السيارة</h1>
-    <button id="toggleMode" class="bg-gray-800 text-white px-4 py-2 rounded">
-      🌙 الوضع الليلي
-    </button>
+<body class="bg-black text-white min-h-screen">
+  <!-- Header with logo and site name -->
+  <header class="bg-black shadow py-4 px-6 flex items-center justify-between">
+    <div class="flex items-center space-x-4 space-x-reverse">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/9/90/Mercedes-Logo.svg" alt="Mercedes Logo" class="h-10 w-auto">
+      <h1 class="text-2xl font-bold tracking-wide">Mercedes-Benz</h1>
+    </div>
   </header>
 
-  <main class="p-6 max-w-4xl mx-auto" id="carDetails">
-    <p class="text-center text-lg" id="loading">جارٍ تحميل البيانات...</p>
-  </main>
+  <div class="max-w-6xl mx-auto p-6">
+    <div id="carDetails" class="fade-in"></div>
+  </div>
 
-  <!-- Script -->
   <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbz4Fjsfuf_1KQtQd_vauNbFu2uyXuF_SxCQuchtn908_gfppMhdH8bKexCsLJT-9pAKeg/exec";
-    const urlParams = new URLSearchParams(window.location.search);
-    const carId = urlParams.get("id");
+    async function fetchCarDetails() {
+      const params = new URLSearchParams(window.location.search);
+      const carId = params.get("id");
+      if (!carId) {
+        document.getElementById("carDetails").innerHTML = "<p class='text-center text-red-500 font-bold'>لم يتم تحديد السيارة.</p>";
+        return;
+      }
 
-    // جلب تفاصيل السيارة
-    fetch(`${scriptURL}?action=getCarById&id=${carId}`)
-      .then(res => res.json())
-      .then(car => {
-        document.getElementById('loading').remove();
-        const container = document.getElementById('carDetails');
+      try {
+        const res = await fetch(`https://script.google.com/macros/s/AKfycbz4Fjsfuf_1KQtQd_vauNbFu2uyXuF_SxCQuchtn908_gfppMhdH8bKexCsLJT-9pAKeg/exec?action=getCarById&id=${carId}`);
+        const car = await res.json();
 
         if (car.error) {
-          container.innerHTML = `<p class="text-red-600 text-center">${car.error}</p>`;
+          document.getElementById("carDetails").innerHTML = `<p class='text-center text-red-500 font-bold'>${car.error}</p>`;
           return;
         }
 
-        container.innerHTML = `
-          <div class="bg-white dark-mode:bg-slate-700 rounded-xl shadow-lg overflow-hidden">
-            <img src="${car["الصورةURL"]}" class="w-full h-64 object-cover" alt="${car["الاسم"]}">
-            <div class="p-6 space-y-4">
-              <h2 class="text-3xl font-bold">${car["الاسم"]}</h2>
-              <p class="text-xl text-gray-700 dark-mode:text-gray-300">💰 السعر: ${car["السعر"]}</p>
-              <p><strong>🧾 المواصفات:</strong> ${car["المواصفات"]}</p>
-              <p><strong>✨ الميزات:</strong> ${car["الميزات"]}</p>
-              <p><strong>🎨 الألوان المتاحة:</strong> ${car["الألوان المتاحة"]}</p>
-              <p><strong>🔧 المحرك:</strong> ${car["المحرك"]}</p>
+        const html = `
+          <div class="text-center">
+            <img src="${car['الصورةURL']}" alt="${car['الاسم']}" class="w-full h-96 object-cover rounded-xl shadow-xl mb-6 zoom-on-hover"/>
+            <h2 class="text-4xl font-extrabold mb-2 highlight">${car['الاسم']}</h2>
+          </div>
 
-              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-                <img src="${car["صورة إضافية 1 URL"]}" class="w-full h-48 object-cover rounded" alt="صورة إضافية 1">
-                <img src="${car["صورة إضافية 2 URL"]}" class="w-full h-48 object-cover rounded" alt="صورة إضافية 2">
-              </div>
-
-              <a href="booking.html?carId=${car["السيارةID"]}" class="block mt-6 text-center bg-black text-white py-3 rounded hover:bg-gray-900 transition">
-                احجز تجربة قيادة
-              </a>
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mt-8">
+            <div class="lg:col-span-2 space-y-4">
+              <p><strong>الوصف:</strong> ${car['الوصف']}</p>
+              <p><strong>السعر:</strong> ${car['السعر']}</p>
+              <p><strong>المحرك:</strong> ${car['المحرك']}</p>
+              <p><strong>المواصفات:</strong> ${car['المواصفات']}</p>
+              <p><strong>الميزات:</strong> ${car['الميزات']}</p>
+              <p><strong>الألوان المتاحة:</strong> ${car['الألوان المتاحة']}</p>
+              <a href="booking.html?carId=${car['السيارةID']}" class="inline-block mt-6 bg-gradient-to-r from-white to-gray-200 text-black font-bold px-8 py-3 rounded hover:scale-105 transition-transform duration-300">احجز تجربة قيادة</a>
+            </div>
+            <div class="flex flex-col gap-4">
+              <img src="${car['صورة إضافية 1 URL']}" alt="صورة إضافية" class="rounded-xl shadow-lg zoom-on-hover">
+              <img src="${car['صورة إضافية 2 URL']}" alt="صورة إضافية" class="rounded-xl shadow-lg zoom-on-hover">
             </div>
           </div>
         `;
-      })
-      .catch(err => {
-        document.getElementById('loading').innerText = "فشل تحميل البيانات.";
-        console.error(err);
-      });
 
-    // الوضع الليلي/النهاري
-    const toggleBtn = document.getElementById('toggleMode');
-    toggleBtn.addEventListener('click', () => {
-      document.body.classList.toggle('dark-mode');
-      toggleBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️ الوضع النهاري' : '🌙 الوضع الليلي';
-    });
+        document.getElementById("carDetails").innerHTML = html;
+      } catch (error) {
+        document.getElementById("carDetails").innerHTML = "<p class='text-center text-red-500 font-bold'>فشل الاتصال بالخادم.</p>";
+      }
+    }
+
+    fetchCarDetails();
   </script>
 </body>
 </html> 
